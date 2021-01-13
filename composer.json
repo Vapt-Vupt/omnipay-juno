@@ -1,0 +1,25 @@
+{
+    "name": "mathe/omnipay-juno",
+    "description": "Juno driver for the Omnipay payment processing library",
+	"keywords": [
+        "gateway",
+        "omnipay",
+        "juno"
+    ],
+    "type": "library",
+	"homepage": "https://github.com/matheussecundo/omnipay-juno",
+    "license": "MIT",
+	"authors": [
+        {
+            "name": "matheussecundo",
+            "email": "matheus.gois@dcomp.ufs.br"
+        }
+    ],
+    "require": {
+        "omnipay/common": "^3",
+        "symfony/cache": "^5"
+    },
+	"autoload": {
+        "psr-4": { "Omnipay\\Juno\\" : "src/" }
+    }
+}
