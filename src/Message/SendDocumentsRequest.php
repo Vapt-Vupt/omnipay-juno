@@ -17,6 +17,11 @@ class SendDocumentsRequest extends AbstractRequest
         return "documents/{$this->getId()}/files";
     }
 
+    public function getContentType()
+    {
+        return 'multipart/form-data';
+    }
+
     public function getData()
     {
         $this->validate('resourceToken');
