@@ -19,7 +19,7 @@ class SendDocumentsRequest extends AbstractRequest
 
     public function getContentType()
     {
-        return 'multipart/form-data';
+        return 'multipart/form-data; charset=utf-8; boundary=' + Math.random().toString().substr(2);
     }
 
     public function getData()
