@@ -19,7 +19,7 @@ class SendDocumentsRequest extends AbstractRequest
 
     public function getContentType()
     {
-        return 'multipart/form-data; charset=utf-8; boundary=' + Math.random().toString().substr(2);
+        return 'multipart/form-data';
     }
 
     public function getData()
@@ -27,11 +27,8 @@ class SendDocumentsRequest extends AbstractRequest
         $this->validate('resourceToken');
 
         $data = [];
-
-        if ($this->getFiles())
-        {
-            $data['files'] = $this->getFiles();
-        }
+        
+        $data['files'] = $this->getFiles();
 
         return $data;
     }

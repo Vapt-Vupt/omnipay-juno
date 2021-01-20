@@ -168,7 +168,19 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             array('Accept' => $this->getAccept()),
         );
 
-        $body = $data ? json_encode($data) : null;
+        /**
+         * multipart/form-data processing
+         */
+        if (strcasecmp($headers['Content-Type'], 'multipart/form-data') === 0) {
+            $body = $this->buildMultipartFormData($data['files'], $headers['Content-Type']);
+        }
+
+        /**
+         * application/json processing
+         */
+        if (strcasecmp($headers['Content-Type'], 'application/json;charset=UTF-8') === 0) {
+            $body = $data ? json_encode($data) : null;
+        }
 
         $httpResponse = $this->httpClient->request(
             $this->getHttpMethod(),
@@ -184,4 +196,72 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->response = new Response($this, $data, $headers);
     }
+
+    /**
+    * Build multipart/form-data
+    *
+    * @param array @$data Data
+    * @param array @$files 1-D array of files where key is field name and value if file contents
+    * @param string &$contentType Retun variable for content type
+    *
+    * @return string Encoded data
+    */
+    private function buildMultipartFormData(array $files, &$contentType)
+    {
+       $eol = "\r\n";
+       
+       // Build test string
+       $testStr = '';
+       
+       // Get file content type and content.  Add to test string
+       $finfo = finfo_open(FILEINFO_MIME_TYPE);
+       $fileContent = array();
+       $fileContentTypes = array();
+       $fileFullName = array();
+       foreach ($files as $key=>$filename)
+       {
+           $fileContent[$key] = file_get_contents($filename);
+           $fileContentTypes[$key] = finfo_file($finfo, $filename);
+           $fileFullName[$key] = basename($filename) . '.' . explode('/', $fileContentTypes[$key])[1];
+           $testStr .= $key . $eol . $fileContentTypes[$key] . $eol. $fileContent[$key] . $eol;
+       }
+       finfo_close($finfo);
+       
+       // Find a boundary not present in the test string
+       $boundaryLen = 6;
+       $alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+       do {
+           $boundary = '--';
+           for ($i = 0; $i < $boundaryLen; $i++)
+           {
+               $c = rand(0, 61);
+               $boundary .= $alpha[$c];
+           }
+           
+           // Check test string
+           if (strpos($testStr, $boundary) !== false)
+           {
+               $boundary = null;
+               $boundaryLen++;
+           }
+       } while ($boundary === null);
+       unset($testStr);
+       
+       // Set content type
+       $contentType = 'multipart/form-data;charset=UTF-8;boundary='.$boundary;
+       
+       // Build data
+       $rtn = '';
+
+       // Add files
+       foreach ($files as $key=>$filename)
+       {
+           $rtn .= '--' . $boundary . $eol . 'Content-Disposition: form-data; name="files"; filename="'. $fileFullName[$key] . '"' . $eol
+               . 'Content-Type: ' . $fileContentTypes[$key] . $eol
+               . 'Content-Transfer-Encoding: binary' . $eol . $eol
+               . $fileContent[$key] . $eol;
+       }
+       
+       return $rtn . '--' . $boundary . '--' . $eol;
+   }
 }
