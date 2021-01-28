@@ -1,5 +1,5 @@
 {
-    "name": "mathe/omnipay-juno",
+    "name": "vapt-vupt/omnipay-juno",
     "description": "Juno driver for the Omnipay payment processing library",
 	"keywords": [
         "gateway",
@@ -7,7 +7,7 @@
         "juno"
     ],
     "type": "library",
-	"homepage": "https://github.com/matheussecundo/omnipay-juno",
+	"homepage": "https://github.com/Vapt-Vupt/omnipay-juno",
     "license": "MIT",
 	"authors": [
         {
