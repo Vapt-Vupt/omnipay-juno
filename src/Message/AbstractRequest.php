@@ -92,6 +92,12 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     private function getBasicAuthorization()
     {
+        if (empty($this->getClientId())) {
+            throw new \Exception("Juno-api: No clientId");
+        }
+        if (empty($this->getClientSecret())) {
+            throw new \Exception("Juno-api: No clientSecret");
+        }
         return 'Basic ' . base64_encode($this->getClientId() . ':' . $this->getClientSecret());
     }
 
@@ -122,7 +128,19 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     
             $responseBody = $httpResponse->getBody()->getContents();
 
+            $statusCode = $httpResponse->getStatusCode();
+
+            if ($statusCode != 200) {
+                switch ($statusCode) {
+                    default: throw new \Exception("Juno: " . $httpResponse->getReasonPhrase());
+                }
+            }
+
             $data = json_decode($responseBody, true);
+
+            if (is_null($data) || !array_key_exists('expires_in', $data)) {
+                throw new \Exception("Juno-api: Failed to get 'expires_in' from body.");
+            }
     
             $item->expiresAfter($data['expires_in']);
         
