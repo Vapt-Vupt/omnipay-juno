@@ -97,7 +97,7 @@ class Gateway extends AbstractGateway
             $parameters
         );
     }
-    
+
     /**
      * @param array $parameters
      * @return SendDocumentsRequest
@@ -106,6 +106,18 @@ class Gateway extends AbstractGateway
     {
         return $this->createRequest(
             Message\SendDocumentsRequest::class,
+            $parameters
+        );
+    }
+
+    /**
+     * @param array $parameters
+     * @return GetDocumentsRequest
+     */
+    public function getBalance(array $parameters = array())
+    {
+        return $this->createRequest(
+            Message\GetBalanceRequest::class,
             $parameters
         );
     }
