@@ -121,4 +121,15 @@ class Gateway extends AbstractGateway
             $parameters
         );
     }
+    /**
+     * @param array $parameters
+     * @return GetDocumentsRequest
+     */
+    public function requestTransfer(array $parameters = array())
+    {
+        return $this->createRequest(
+            Message\RequestTransferRequest::class,
+            $parameters
+        );
+    }
 }
