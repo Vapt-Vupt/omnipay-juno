@@ -3,6 +3,7 @@
 namespace Omnipay\Juno\Message;
 
 use Omnipay\Juno\BankAccount;
+use Omnipay\Juno\JunoBankAccount;
 use Omnipay\Common\Exception\InvalidRequestException;
 
 class RequestTransferRequest extends AbstractRequest
@@ -33,12 +34,15 @@ class RequestTransferRequest extends AbstractRequest
 
             $data['amount'] = $this->getAmount();
 
-            $data['bankAccount'] = $this->getBankAccount();
+            $bankAccount = $this->getBankAccount() instanceof JunoBankAccount ? $this->getBankAccount() : new JunoBankAccount($this->getBankAccount());
         } else if ($data['type'] == "DEFAULT_BANK_ACCOUNT") {
             $this->validate('resourceToken', 'type', 'amount');
+
             $data['amount'] = $this->getAmount();
         } else if ($data['type'] == "BANK_ACCOUNT") {
+
             $this->validate('resourceToken', 'type', 'document', 'amount', 'bankAccount');
+
             $data['name'] = $this->getName();
 
             $data['document'] = $this->getDocument();
@@ -46,7 +50,9 @@ class RequestTransferRequest extends AbstractRequest
             $data['amount'] = $this->getAmount();
 
             $bankAccount = $this->getBankAccount() instanceof BankAccount ? $this->getBankAccount() : new BankAccount($this->getBankAccount());
+
             $bankAccount->validate();
+
             $data['bankAccount'] = $bankAccount->getParameters();
         }
 
