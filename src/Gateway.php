@@ -109,10 +109,10 @@ class Gateway extends AbstractGateway
             $parameters
         );
     }
-
+    
     /**
      * @param array $parameters
-     * @return GetDocumentsRequest
+     * @return GetBalanceRequest
      */
     public function getBalance(array $parameters = array())
     {
