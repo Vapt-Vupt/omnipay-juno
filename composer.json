@@ -1,6 +1,6 @@
 {
     "name": "vapt-vupt/omnipay-juno",
-    "version" : "0.1",
+    "version" : "0.2",
     "description": "Juno driver for the Omnipay payment processing library",
 	"keywords": [
         "gateway",
